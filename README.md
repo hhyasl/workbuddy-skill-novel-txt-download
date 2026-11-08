@@ -165,7 +165,7 @@ novel-txt-download/
 
 - 仅用于**正版免费作品**的个人离线阅读（番茄小说等平台的免费连载作品）
 - 只抓取公开可访问的页面，不绕过付费墙、不抓取盗版专有内容
-- 付费章节（`needPay` / `isChapterLock`）会被跳过
+- 付费章节（`needPay` / `isPaidPublication` / `isPaidStory`）会被跳过。注意 `isChapterLock` **不是**付费标记，免费书也会大片为 `true`
 
 ## License
 

@@ -55,16 +55,21 @@ def cmd_catalog(args):
                 "title": c.get("title", ""),
                 "item_id": c.get("itemId", ""),
                 "order": c.get("realChapterOrder", ""),
-                "locked": bool(c.get("isChapterLock") or c.get("needPay")),
+                # 注意：isChapterLock 对免费书也几乎全是 True（表示"未在 APP 解锁"，
+                # 不代表付费）。付费判定只认 needPay / isPaidPublication / isPaidStory。
+                "locked": bool(c.get("needPay") or c.get("isPaidPublication") or c.get("isPaidStory")),
             })
         out["volumes"].append({"name": vname, "chapters": chapters})
     total = sum(len(v["chapters"]) for v in out["volumes"])
     with open(args.out, "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=1)
+    paid = sum(1 for v in out["volumes"] for c in v["chapters"] if c["locked"])
     print(f"[OK] 目录已保存 -> {args.out}")
-    print(f"     卷数 {len(out['volumes'])}  章节 {total}")
+    print(f"     卷数 {len(out['volumes'])}  章节 {total}  付费章 {paid}")
     for v in out["volumes"]:
         print(f"     【{v['name']}】{len(v['chapters'])} 章")
+    if paid:
+        print(f"[!] 检测到 {paid} 个付费章，按使用边界应跳过这些章节")
     return 0
 
 
